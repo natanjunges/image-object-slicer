@@ -10,13 +10,14 @@ This repository contains a Python script that can easily cut images from annotat
 
 Using the script is pretty simple, since it only has three parameters.
 
+
 ```
-usage: pascalvoc-to-image [-h] pascalDir imageDir saveDir
+usage: pascalvoc-to-image [-h] pascalDirectory imageDirectory saveDirectory
 
 positional arguments:
-  pascalDir   A path to the directory with Pascal VOC XML files
-  imageDir    A path to the directory with images
-  saveDir     A path to the directory to save Pascal boundingbox images to
+  pascalDirectory   A path to the directory with Pascal VOC XML files
+  imageDirectory    A path to the directory with images
+  saveDirectory     A path to the directory to save Pascal boundingbox images to
 
 optional arguments:
   -h, --help  show this help message and exit
@@ -24,10 +25,16 @@ optional arguments:
 
 # Installation
 
+## Pip
+
+```
+$ pip install pascalvoc-to-image
+```
+
 ## Manual
 
 ```
-$ git clone https://github.com/jdreg95/pascalvoc-to-image.git
+$ git clone https://www.gitlab.com/jdreg95/pascalvoc-to-image.git
 $ cd pascalvoc-to-image
 $ sudo pip install .
-
+```
