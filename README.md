@@ -1,11 +1,13 @@
 # pascalvoc-to-image
+This is a fork of [gitlab.com/straighter/pascalvoc-to-image](https://gitlab.com/straighter/pascalvoc-to-image).
+
 Tool to cut objects from bounding boxes in PascalVOC XML files. It will:
 -   Read the directory containing the XMLs
 -   Parse the XMLs to a readable format
 -   Create images for all created bounding boxes in a separate folder
 
 ## Usage
-Using the script is pretty simple, since it only has three parameters.
+Using the script is pretty simple, since it only has three required parameters:
 
 
 ```
