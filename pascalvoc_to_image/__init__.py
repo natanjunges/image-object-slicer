@@ -17,7 +17,7 @@
 
 import argparse
 import os
-import xml.etree.ElementTree
+from xml.etree import ElementTree
 from tqdm import tqdm
 from PIL import Image
 
@@ -37,7 +37,7 @@ def get_pascal_files(path):
     """Get all PascalVOC XML files from a specific path."""
     files = []
 
-    for file in tqdm(os.listdir(path)):
+    for file in tqdm(os.listdir(path), desc="Finding PascalVOC files"):
         if file.endswith(".xml"):
             files.append(os.path.join(path, file))
 
@@ -75,7 +75,7 @@ def parse_pascal_files(files, image_dir):
     objects = []
     labels = set()
 
-    for file in tqdm(files, ascii=True, desc="Parsing PascalVOC files"):
+    for file in tqdm(files, desc="Parsing PascalVOC files"):
         try:
             parses = parse_pascal_file(file, image_dir)
             labels = labels.union(parses.get("labels"))
@@ -88,7 +88,7 @@ def parse_pascal_files(files, image_dir):
 
 def pascalvoc_to_images(objects, save_path):
     """Loop through all PascalVOC objects and cut an image from each."""
-    for object in tqdm(objects, ascii=True, desc="Creating images from PascalVOC objects"):
+    for object in tqdm(objects, desc="Generating images"):
         pascalvoc_to_image(object, save_path)
 
 def pascalvoc_to_image(object, save_path):
@@ -106,7 +106,7 @@ def pascalvoc_to_image(object, save_path):
 
 def create_label_dirs(labels, save_path):
     """Function to create all label directories."""
-    for label in tqdm(labels, ascii=True, desc="Creating label directories"):
+    for label in tqdm(labels, desc="Creating directories"):
         make_dir(save_path, label)
 
 def make_dir(path, name=""):
