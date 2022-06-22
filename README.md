@@ -9,17 +9,19 @@ Using the script is pretty simple, since it only has three parameters.
 
 
 ```
-usage: pascalvoc-to-image [-h] pascal images save
+usage: pascalvoc-to-image [-h] [-p PADDING] pascal images save
 
 Tool to cut objects from bounding boxes in PascalVOC XML files
 
 positional arguments:
-  pascal      A path to the directory with the PascalVOC XML files
-  images      A path to the directory with the input images
-  save        A path to the directory to save the object bounding box images to
+  pascal                A path to the directory with the PascalVOC XML files
+  images                A path to the directory with the input images
+  save                  A path to the directory to save the object bounding box images to
 
 options:
-  -h, --help  show this help message and exit
+  -h, --help            show this help message and exit
+  -p PADDING, --padding PADDING
+                        The amount of padding (in pixels) to add to each bounding box
 ```
 
 ## Installation
