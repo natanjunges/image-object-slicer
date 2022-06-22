@@ -9,7 +9,7 @@ Using the script is pretty simple, since it only has three parameters.
 
 
 ```
-usage: pascalvoc-to-image [-h] [-p PADDING] pascal images save
+usage: pascalvoc-to-image [-h] [-p PADDING] [-w WORKERS] pascal images save
 
 Tool to cut objects from bounding boxes in PascalVOC XML files
 
@@ -22,6 +22,8 @@ options:
   -h, --help            show this help message and exit
   -p PADDING, --padding PADDING
                         The amount of padding (in pixels) to add to each bounding box
+  -w WORKERS, --workers WORKERS
+                        The number of parallel workers to run (default is cpu count)
 ```
 
 ## Installation

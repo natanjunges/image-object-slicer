@@ -20,6 +20,7 @@ import os
 from xml.etree import ElementTree
 from tqdm import tqdm
 from PIL import Image
+from multiprocessing import Pool, cpu_count
 
 def main():
     parser = argparse.ArgumentParser(description="Tool to cut objects from bounding boxes in PascalVOC XML files")
@@ -27,12 +28,13 @@ def main():
     parser.add_argument("images", help="A path to the directory with the input images")
     parser.add_argument("save", help="A path to the directory to save the object bounding box images to")
     parser.add_argument("-p", "--padding", type=int, default=0, help="The amount of padding (in pixels) to add to each bounding box")
+    parser.add_argument("-w", "--workers", type=int, default=cpu_count(), help="The number of parallel workers to run (default is cpu count)")
     args = parser.parse_args()
     pascal_files = get_pascal_files(args.pascal)
-    parsed_pascal_files = parse_pascal_files(pascal_files, args.images)
+    parsed_pascal_files = parse_pascal_files(pascal_files, args.images, args.workers)
     make_dir(args.save)
     create_label_dirs(parsed_pascal_files.get("labels"), args.save)
-    pascalvoc_to_images(parsed_pascal_files.get("objects"), args.padding, args.save)
+    pascalvoc_to_images(parsed_pascal_files.get("objects"), args.padding, args.save, args.workers)
 
 def get_pascal_files(path):
     """Get all PascalVOC XML files from a specific path."""
@@ -44,60 +46,68 @@ def get_pascal_files(path):
 
     return files
 
-def parse_pascal_file(file, image_dir):
+def parse_pascal_file(args):
     """Parse a specific PascalVOC file to a usable dict format."""
-    xml = ElementTree.parse(file)
-    img_name = xml.find("filename").text.split(".")
-    img_extension = img_name[-1]
-    img_name = ".".join(img_name[:-1])
-    objects = []
-    labels = set()
+    file = args[0]
+    image_dir = args[1]
 
-    for obj in xml.iter("object"):
-        object_label = obj.find("name").text
-        object_bndbox = obj.find("bndbox")
-        labels.add(object_label)
-        objects.append({
-            "path": os.path.join(image_dir, "{}.{}".format(img_name, img_extension)),
-            "xmin": float(object_bndbox.find("xmin").text),
-            "xmax": float(object_bndbox.find("xmax").text),
-            "ymin": float(object_bndbox.find("ymin").text),
-            "ymax": float(object_bndbox.find("ymax").text),
-            "label": object_label
-        })
+    try:
+        xml = ElementTree.parse(file)
+        img_name = xml.find("filename").text.split(".")
+        img_extension = img_name[-1]
+        img_name = ".".join(img_name[:-1])
+        objects = []
+        labels = set()
 
-    # Sort left-to-right, top-to-bottom
-    objects.sort(key=lambda obj: (int(round(obj.get("xmin"))), int(round(obj.get("ymin"))), int(round(obj.get("xmax"))), int(round(obj.get("ymax")))))
+        for obj in xml.iter("object"):
+            object_label = obj.find("name").text
+            object_bndbox = obj.find("bndbox")
+            labels.add(object_label)
+            objects.append({
+                "path": os.path.join(image_dir, "{}.{}".format(img_name, img_extension)),
+                "xmin": float(object_bndbox.find("xmin").text),
+                "xmax": float(object_bndbox.find("xmax").text),
+                "ymin": float(object_bndbox.find("ymin").text),
+                "ymax": float(object_bndbox.find("ymax").text),
+                "label": object_label
+            })
 
-    for i, obj in enumerate(objects):
-        # Number each individual object to be able to get multiple objects from one file
-        obj["name"] = "{}-{}-{}.{}".format(img_name, obj.get("label"), i, img_extension)
+        # Sort left-to-right, top-to-bottom
+        objects.sort(key=lambda obj: (int(round(obj.get("xmin"))), int(round(obj.get("ymin"))), int(round(obj.get("xmax"))), int(round(obj.get("ymax")))))
 
-    return {"objects": objects, "labels": labels}
+        for i, obj in enumerate(objects):
+            # Number each individual object to be able to get multiple objects from one file
+            obj["name"] = "{}-{}-{}.{}".format(img_name, obj.get("label"), i, img_extension)
 
-def parse_pascal_files(files, image_dir):
+        return {"objects": objects, "labels": labels}
+    except Exception as e:
+        # Just error if a single file can't be read
+        print("Error parsing PascalVOC file: " + str(e))
+
+def parse_pascal_files(files, image_dir, workers):
     """Parse all PascalVOC files."""
     objects = []
     labels = set()
 
-    for file in tqdm(files, desc="Parsing PascalVOC files"):
-        try:
-            parses = parse_pascal_file(file, image_dir)
-            labels = labels.union(parses.get("labels"))
-            objects += parses.get("objects")
-        except Exception as e:
-            # Just error if a single file can't be read
-            print("Error parsing PascalVOC file: " + str(e))
+    with Pool(workers) as pool:
+        for parses in tqdm(pool.imap_unordered(parse_pascal_file, [(file, image_dir) for file in files], workers), desc="Parsing PascalVOC files", total=len(files)):
+            if parses is not None:
+                labels = labels.union(parses.get("labels"))
+                objects += parses.get("objects")
 
     return {"objects": objects, "labels": labels}
 
-def pascalvoc_to_images(objects, padding, save_path):
+def pascalvoc_to_images(objects, padding, save_path, workers):
     """Loop through all PascalVOC objects and cut an image from each."""
-    for object in tqdm(objects, desc="Generating images"):
-        pascalvoc_to_image(object, padding, save_path)
+    with Pool(workers) as pool:
+        for _ in tqdm(pool.imap_unordered(pascalvoc_to_image, [(object, padding, save_path) for object in objects], workers), desc="Generating images", total=len(objects)):
+            pass
 
-def pascalvoc_to_image(object, padding, save_path):
+def pascalvoc_to_image(args):
     """Cut an image from a PascalVOC object."""
+    object = args[0]
+    padding = args[1]
+    save_path = args[2]
     image = Image.open(object.get("path"))
     # Create the bounding box to cut from
     bndbox = (max(0, object.get("xmin") - padding), max(0, object.get("ymin") - padding), min(object.get("xmax") + padding, image.width), min(object.get("ymax") + padding, image.height))
