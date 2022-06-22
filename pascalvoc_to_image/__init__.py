@@ -22,6 +22,8 @@ from tqdm import tqdm
 from PIL import Image
 from multiprocessing import Pool, cpu_count
 
+__version__ = "1.2.0"
+
 def main():
     parser = argparse.ArgumentParser(description="Tool to cut objects from bounding boxes in PascalVOC XML files")
     parser.add_argument("pascal", help="A path to the directory with the PascalVOC XML files")
@@ -29,6 +31,7 @@ def main():
     parser.add_argument("save", help="A path to the directory to save the object bounding box images to")
     parser.add_argument("-p", "--padding", type=int, default=0, help="The amount of padding (in pixels) to add to each bounding box")
     parser.add_argument("-w", "--workers", type=int, default=cpu_count(), help="The number of parallel workers to run (default is cpu count)")
+    parser.add_argument("-v", "--version", action="version", version="%(prog)s " + __version__)
     args = parser.parse_args()
     pascal_files = get_pascal_files(args.pascal)
     parsed_pascal_files = parse_pascal_files(pascal_files, args.images, args.workers)
