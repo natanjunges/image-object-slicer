@@ -5,11 +5,11 @@ with open('requirements.txt') as fp:
 
 setup(
     name='pascalvoc_to_image',
-    version='1.0',
-    url='http://www.github.com/jdreg95/pascalvoc-to-image',
-    author='Jori Regter',
-    author_email='joriregter@gmail.com',
-    license='MIT',
+    version='1.1',
+    url='https://www.github.com/natanjunges/pascalvoc-to-image',
+    author='Natan Junges',
+    author_email='natanajunges@gmail.com',
+    license='GPLv3+',
     packages=find_packages(),
     scripts=['bin/pascalvoc-to-image'],
     install_requires=install_requires
