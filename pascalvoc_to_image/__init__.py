@@ -26,12 +26,13 @@ def main():
     parser.add_argument("pascal", help="A path to the directory with the PascalVOC XML files")
     parser.add_argument("images", help="A path to the directory with the input images")
     parser.add_argument("save", help="A path to the directory to save the object bounding box images to")
+    parser.add_argument("-p", "--padding", type=int, default=0, help="The amount of padding (in pixels) to add to each bounding box")
     args = parser.parse_args()
     pascal_files = get_pascal_files(args.pascal)
     parsed_pascal_files = parse_pascal_files(pascal_files, args.images)
     make_dir(args.save)
     create_label_dirs(parsed_pascal_files.get("labels"), args.save)
-    pascalvoc_to_images(parsed_pascal_files.get("objects"), args.save)
+    pascalvoc_to_images(parsed_pascal_files.get("objects"), args.padding, args.save)
 
 def get_pascal_files(path):
     """Get all PascalVOC XML files from a specific path."""
@@ -52,21 +53,25 @@ def parse_pascal_file(file, image_dir):
     objects = []
     labels = set()
 
-    for i, obj in enumerate(xml.iter("object")):
+    for obj in xml.iter("object"):
         object_label = obj.find("name").text
-        # Number each individual object to be able to get multiple objects from one file
-        object_name = "{}-{}-{}.{}".format(img_name, object_label, i, img_extension)
         object_bndbox = obj.find("bndbox")
         labels.add(object_label)
         objects.append({
             "path": os.path.join(image_dir, "{}.{}".format(img_name, img_extension)),
-            "name": object_name,
-            "xmin": int(float(object_bndbox.find("xmin").text)),
-            "xmax": int(float(object_bndbox.find("xmax").text)),
-            "ymin": int(float(object_bndbox.find("ymin").text)),
-            "ymax": int(float(object_bndbox.find("ymax").text)),
+            "xmin": float(object_bndbox.find("xmin").text),
+            "xmax": float(object_bndbox.find("xmax").text),
+            "ymin": float(object_bndbox.find("ymin").text),
+            "ymax": float(object_bndbox.find("ymax").text),
             "label": object_label
         })
+
+    # Sort left-to-right, top-to-bottom
+    objects.sort(key=lambda obj: (int(round(obj.get("xmin"))), int(round(obj.get("ymin"))), int(round(obj.get("xmax"))), int(round(obj.get("ymax")))))
+
+    for i, obj in enumerate(objects):
+        # Number each individual object to be able to get multiple objects from one file
+        obj["name"] = "{}-{}-{}.{}".format(img_name, obj.get("label"), i, img_extension)
 
     return {"objects": objects, "labels": labels}
 
@@ -86,16 +91,16 @@ def parse_pascal_files(files, image_dir):
 
     return {"objects": objects, "labels": labels}
 
-def pascalvoc_to_images(objects, save_path):
+def pascalvoc_to_images(objects, padding, save_path):
     """Loop through all PascalVOC objects and cut an image from each."""
     for object in tqdm(objects, desc="Generating images"):
-        pascalvoc_to_image(object, save_path)
+        pascalvoc_to_image(object, padding, save_path)
 
-def pascalvoc_to_image(object, save_path):
+def pascalvoc_to_image(object, padding, save_path):
     """Cut an image from a PascalVOC object."""
-    # Create the bounding box to cut from
-    bndbox = (object.get("xmin"), object.get("ymin"), object.get("xmax"), object.get("ymax"))
     image = Image.open(object.get("path"))
+    # Create the bounding box to cut from
+    bndbox = (max(0, object.get("xmin") - padding), max(0, object.get("ymin") - padding), min(object.get("xmax") + padding, image.width), min(object.get("ymax") + padding, image.height))
     image = image.crop(bndbox)
 
     try:
