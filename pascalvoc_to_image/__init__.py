@@ -17,8 +17,7 @@
 
 import argparse
 import os
-import xml.etree.ElementTree as ET
-import time
+import xml.etree.ElementTree
 from tqdm import tqdm
 from PIL import Image
 
@@ -46,7 +45,7 @@ def get_pascal_files(path):
 
 def parse_pascal_file(file, image_dir):
     """Parse a specific PascalVOC file to a usable dict format."""
-    xml = ET.parse(file)
+    xml = ElementTree.parse(file)
     img_name = xml.find("filename").text.split(".")
     img_extension = img_name[-1]
     img_name = ".".join(img_name[:-1])
