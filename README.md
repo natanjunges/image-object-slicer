@@ -11,20 +11,20 @@ Using the script is pretty simple, since it only has three required parameters:
 
 
 ```
-usage: pascalvoc-to-image [-h] [-v] [-p PADDING] [-w WORKERS] pascal images save
+usage: pascalvoc-to-image [-h] [-v] [-p PADDING] [-w WORKERS] annotations images save
 
-Tool to cut objects from bounding boxes in PascalVOC XML files
+Slice images using annotation files
 
 positional arguments:
-  pascal                A path to the directory with the PascalVOC XML files
+  annotations           A path to the directory with the annotation files
   images                A path to the directory with the input images
-  save                  A path to the directory to save the object bounding box images to
+  save                  A path to the directory to save the image slices to
 
 options:
   -h, --help            show this help message and exit
   -v, --version         show program's version number and exit
   -p PADDING, --padding PADDING
-                        The amount of padding (in pixels) to add to each bounding box
+                        The amount of padding (in pixels) to add to each image slice
   -w WORKERS, --workers WORKERS
                         The number of parallel workers to run (default is cpu count)
 ```
