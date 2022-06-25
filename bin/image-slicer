@@ -1,0 +1,3 @@
+#!/usr/bin/env python
+import image_slicer
+image_slicer.main()

@@ -1,17 +1,14 @@
-# pascalvoc-to-image
-This is a fork of [gitlab.com/straighter/pascalvoc-to-image](https://gitlab.com/straighter/pascalvoc-to-image).
+# image-slicer
+Slice images using annotation files. Convert an object detection dataset to an image classification one.
 
-Tool to cut objects from bounding boxes in PascalVOC XML files. It will:
--   Read the directory containing the XMLs
--   Parse the XMLs to a readable format
--   Create images for all created bounding boxes in a separate folder
+This is a fork of [gitlab.com/straighter/pascalvoc-to-image](https://gitlab.com/straighter/pascalvoc-to-image).
 
 ## Usage
 Using the script is pretty simple, since it only has three required parameters:
 
 
 ```
-usage: pascalvoc-to-image [-h] [-v] [-p PADDING] [-w WORKERS] annotations images save
+usage: image-slicer [-h] [-v] [-p PADDING] [-w WORKERS] annotations images save
 
 Slice images using annotation files
 
@@ -30,15 +27,15 @@ options:
 ```
 
 ## Installation
-Download the latest stable wheel file from the [releases page](https://github.com/natanjunges/pascalvoc-to-image/releases) and run:
+Download the latest stable wheel file from the [releases page](https://github.com/natanjunges/image-slicer/releases) and run:
 ```shell
-sudo pip3 install ./pascalvoc_to_image-*-py3-none-any.whl
+sudo pip3 install ./image_slicer-*-py3-none-any.whl
 ```
 
 Or install the latest development version from the git repository:
 ```shell
-git clone https://www.github.com/natanjunges/pascalvoc-to-image.git
-cd pascalvoc-to-image
+git clone https://www.github.com/natanjunges/image-slicer.git
+cd image-slicer
 sudo pip3 install ./
 ```
 

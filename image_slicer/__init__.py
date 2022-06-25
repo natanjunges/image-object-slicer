@@ -1,19 +1,19 @@
-# pascalvoc-to-image, slice images using annotation files.
+# image-slicer, slice images using annotation files.
 # Copyright (C) 2018  Jori Regter <joriregter@gmail.com>
 # Copyright (C) 2022  Natan Junges <natanajunges@gmail.com>
 #
-# pascalvoc-to-image is free software: you can redistribute it and/or modify
+# image-slicer is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # any later version.
 #
-# pascalvoc-to-image is distributed in the hope that it will be useful,
+# image-slicer is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with pascalvoc-to-image.  If not, see <https://www.gnu.org/licenses/>.
+# along with image-slicer.  If not, see <https://www.gnu.org/licenses/>.
 
 import argparse
 import os
@@ -22,7 +22,7 @@ from tqdm import tqdm
 from PIL import Image
 from multiprocessing import Pool, cpu_count
 
-__version__ = "1.2.2"
+__version__ = "1.2.3"
 
 def main():
     parser = argparse.ArgumentParser(description="Slice images using annotation files")
