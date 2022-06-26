@@ -8,7 +8,7 @@ Using the script is pretty simple, since it only has three required parameters:
 
 
 ```
-usage: image-object-slicer [-h] [-v] [-p PADDING] [-w WORKERS] annotations images save
+usage: image-object-slicer [-h] [-v] [-f {pascalvoc}] [-p PADDING] [-w WORKERS] annotations images save
 
 Slice objects from images using annotation files
 
@@ -20,6 +20,8 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   -v, --version         show program's version number and exit
+  -f {pascalvoc}, --format {pascalvoc}
+                        The format of the annotation files (default is pascalvoc)
   -p PADDING, --padding PADDING
                         The amount of padding (in pixels) to add to each image slice
   -w WORKERS, --workers WORKERS
