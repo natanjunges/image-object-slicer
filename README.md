@@ -1,5 +1,5 @@
-# image-slicer
-Slice images using annotation files. Convert an object detection dataset to an image classification one.
+# image-object-slicer
+Slice objects from images using annotation files. Convert an object detection dataset to an image classification one.
 
 This is a fork of [gitlab.com/straighter/pascalvoc-to-image](https://gitlab.com/straighter/pascalvoc-to-image).
 
@@ -8,9 +8,9 @@ Using the script is pretty simple, since it only has three required parameters:
 
 
 ```
-usage: image-slicer [-h] [-v] [-p PADDING] [-w WORKERS] annotations images save
+usage: image-object-slicer [-h] [-v] [-p PADDING] [-w WORKERS] annotations images save
 
-Slice images using annotation files
+Slice objects from images using annotation files
 
 positional arguments:
   annotations           A path to the directory with the annotation files
@@ -27,15 +27,15 @@ options:
 ```
 
 ## Installation
-Download the latest stable wheel file from the [releases page](https://github.com/natanjunges/image-slicer/releases) and run:
+Download the latest stable wheel file from the [releases page](https://github.com/natanjunges/image-object-slicer/releases) and run:
 ```shell
-sudo pip3 install ./image_slicer-*-py3-none-any.whl
+sudo pip3 install ./image_object_slicer-*-py3-none-any.whl
 ```
 
 Or install the latest development version from the git repository:
 ```shell
-git clone https://www.github.com/natanjunges/image-slicer.git
-cd image-slicer
+git clone https://www.github.com/natanjunges/image-object-slicer.git
+cd image-object-slicer
 sudo pip3 install ./
 ```
 
