@@ -1,5 +1,4 @@
 # This file is part of image-object-slicer
-# Copyright (C) 2018  Jori Regter <joriregter@gmail.com>
 # Copyright (C) 2022  Natan Junges <natanajunges@gmail.com>
 #
 # image-object-slicer is free software: you can redistribute it and/or modify

@@ -21,13 +21,13 @@ from xml.etree import ElementTree
 from .AnnotationParser import AnnotationParser
 
 class PascalVOCParser(AnnotationParser):
-    """Class that abstracts the annotation parsing of the PascalVOC format."""
+    """Class that abstracts the annotation parsing of the Pascal VOC format."""
 
     extension = "xml"
 
     @classmethod
     def parse(cls, file):
-        """Parse a PascalVOC annotation file to a usable dict format."""
+        """Parse a Pascal VOC annotation file to a usable dict format."""
         xml = ElementTree.parse(file)
         name = xml.find("filename").text
         slices = []

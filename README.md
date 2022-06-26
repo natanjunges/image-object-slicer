@@ -3,10 +3,27 @@ Slice objects from images using annotation files. Convert an object detection da
 
 This is a fork of [gitlab.com/straighter/pascalvoc-to-image](https://gitlab.com/straighter/pascalvoc-to-image).
 
+## Installation
+Download the latest stable wheel file from the [releases page](https://github.com/natanjunges/image-object-slicer/releases) and run:
+```shell
+sudo pip3 install ./image_object_slicer-*-py3-none-any.whl
+```
+
+Or install the latest development version from the git repository:
+```shell
+git clone https://www.github.com/natanjunges/image-object-slicer.git
+cd image-object-slicer
+sudo pip3 install ./
+```
+
 ## Usage
+Different formats of annotation files are supported:
+
+| Annotation format | Command line option |
+|-------------------|---------------------|
+| [Pascal VOC](http://host.robots.ox.ac.uk/pascal/VOC/) | `pascalvoc` |
+
 Using the script is pretty simple, since it only has three required parameters:
-
-
 ```
 usage: image-object-slicer [-h] [-v] [-f {pascalvoc}] [-p PADDING] [-w WORKERS] annotations images save
 
@@ -26,19 +43,6 @@ options:
                         The amount of padding (in pixels) to add to each image slice
   -w WORKERS, --workers WORKERS
                         The number of parallel workers to run (default is cpu count)
-```
-
-## Installation
-Download the latest stable wheel file from the [releases page](https://github.com/natanjunges/image-object-slicer/releases) and run:
-```shell
-sudo pip3 install ./image_object_slicer-*-py3-none-any.whl
-```
-
-Or install the latest development version from the git repository:
-```shell
-git clone https://www.github.com/natanjunges/image-object-slicer.git
-cd image-object-slicer
-sudo pip3 install ./
 ```
 
 ## Building
