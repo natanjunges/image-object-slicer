@@ -25,15 +25,17 @@ import pathlib
 from .SingleFileAnnotationParser import SingleFileAnnotationParser
 from .MultipleFileAnnotationParser import MultipleFileAnnotationParser
 from .PascalVOCParser import PascalVOCParser
+from .COCOParser import COCOParser
 from .CVATImagesParser import CVATImagesParser
 from .DatumaroParser import DatumaroParser
 from .LabelMeParser import LabelMeParser
 
-__version__ = "1.6.0"
+__version__ = "1.7.0"
 
 formats = {
     # The first is always the default
     "pascalvoc": PascalVOCParser,
+    "coco": COCOParser,
     "cvatimages": CVATImagesParser,
     "datumaro": DatumaroParser,
     "labelme": LabelMeParser
