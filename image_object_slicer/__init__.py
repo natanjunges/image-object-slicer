@@ -27,7 +27,7 @@ from .MultipleFileAnnotationParser import MultipleFileAnnotationParser
 from .PascalVOCParser import PascalVOCParser
 from .CVATImagesParser import CVATImagesParser
 
-__version__ = "1.4.0"
+__version__ = "1.4.1"
 
 formats = {
     # The first is always the default
