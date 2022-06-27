@@ -26,13 +26,15 @@ from .SingleFileAnnotationParser import SingleFileAnnotationParser
 from .MultipleFileAnnotationParser import MultipleFileAnnotationParser
 from .PascalVOCParser import PascalVOCParser
 from .CVATImagesParser import CVATImagesParser
+from .LabelMeParser import LabelMeParser
 
-__version__ = "1.4.1"
+__version__ = "1.5.0"
 
 formats = {
     # The first is always the default
     "pascalvoc": PascalVOCParser,
-    "cvatimages": CVATImagesParser
+    "cvatimages": CVATImagesParser,
+    "labelme": LabelMeParser
 }
 
 def main():
