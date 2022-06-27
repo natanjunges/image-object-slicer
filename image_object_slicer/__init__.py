@@ -20,14 +20,19 @@ import os
 from tqdm import tqdm
 from PIL import Image
 from multiprocessing import Pool, cpu_count
+import pathlib
 
+from .SingleFileAnnotationParser import SingleFileAnnotationParser
+from .MultipleFileAnnotationParser import MultipleFileAnnotationParser
 from .PascalVOCParser import PascalVOCParser
+from .CVATImagesParser import CVATImagesParser
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 
 formats = {
     # The first is always the default
-    "pascalvoc": PascalVOCParser
+    "pascalvoc": PascalVOCParser,
+    "cvatimages": CVATImagesParser
 }
 
 def main():
@@ -57,11 +62,21 @@ def main():
 
 def find_annotation_files(format, path):
     """Find all annotation files from a specific path."""
-    files = []
+    if issubclass(format, SingleFileAnnotationParser):
+        print("Finding annotation file")
+        files = list(pathlib.Path(path).glob(format.glob))
 
-    for file in tqdm(os.listdir(path), desc="Finding annotation files"):
-        if file.endswith("." + format.extension):
-            files.append(os.path.join(path, file))
+        if len(files) > 0:
+            files = [file.name for file in files]
+
+        if len(files) > 1:
+            raise Exception("Could not find a unique annotation file: {}".format(files))
+    else:
+        files = []
+
+        for file in tqdm(os.listdir(path), desc="Finding annotation files"):
+            if file.endswith("." + format.extension):
+                files.append(os.path.join(path, file))
 
     return files
 
@@ -71,7 +86,7 @@ def parse_annotation_file(args):
     file = args[1]
 
     try:
-        parse = format.parse(file)
+        parse = format.parse_file(file)
         # Sort left-to-right, top-to-bottom
         parse.get("slices").sort(key=lambda slice: (int(round(slice.get("xmin"))), int(round(slice.get("ymin"))), int(round(slice.get("xmax"))), int(round(slice.get("ymax")))))
         return parse
@@ -79,18 +94,42 @@ def parse_annotation_file(args):
         # Just error if a single file cannot be read
         print("Error parsing annotation file: " + str(e))
 
+def parse_annotation_item(args):
+    """Parse a specific annotation item to a usable dict format."""
+    format = args[0]
+    item = args[1]
+
+    try:
+        parse = format.parse_item(item)
+        # Sort left-to-right, top-to-bottom
+        parse.get("slices").sort(key=lambda slice: (int(round(slice.get("xmin"))), int(round(slice.get("ymin"))), int(round(slice.get("xmax"))), int(round(slice.get("ymax")))))
+        return parse
+    except Exception as e:
+        # Just error if a single item cannot be read
+        print("Error parsing annotation item: " + str(e))
+
 def parse_annotation_files(format, files, workers):
     """Parse all annotation files."""
     names = []
     slice_groups = []
     labels = set()
 
-    with Pool(workers) as pool:
-        for parses in tqdm(pool.imap_unordered(parse_annotation_file, [(format, file) for file in files], workers), desc="Parsing annotation files", total=len(files)):
-            if parses is not None and len(parses.get("slices")) > 0:
-                labels = labels.union(parses.get("labels"))
-                names.append(parses.get("name"))
-                slice_groups.append(parses.get("slices"))
+    if issubclass(format, SingleFileAnnotationParser):
+        split = format.split_file(files[0])
+
+        with Pool(workers) as pool:
+            for parses in tqdm(pool.imap_unordered(parse_annotation_item, [(format, item) for item in split], workers), desc="Parsing annotation file", total=len(split)):
+                if parses is not None and len(parses.get("slices")) > 0:
+                    labels = labels.union(parses.get("labels"))
+                    names.append(parses.get("name"))
+                    slice_groups.append(parses.get("slices"))
+    else:
+        with Pool(workers) as pool:
+            for parses in tqdm(pool.imap_unordered(parse_annotation_file, [(format, file) for file in files], workers), desc="Parsing annotation files", total=len(files)):
+                if parses is not None and len(parses.get("slices")) > 0:
+                    labels = labels.union(parses.get("labels"))
+                    names.append(parses.get("name"))
+                    slice_groups.append(parses.get("slices"))
 
     return {"names": names, "slice_groups": slice_groups, "labels": labels}
 

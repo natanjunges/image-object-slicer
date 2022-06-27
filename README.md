@@ -21,11 +21,12 @@ Different formats of annotation files are supported:
 
 | Annotation format | Command line option |
 |-------------------|---------------------|
+| [CVAT for images](https://openvinotoolkit.github.io/cvat/docs/manual/advanced/xml_format/#annotation) | `cvatimages` |
 | [Pascal VOC](http://host.robots.ox.ac.uk/pascal/VOC/) | `pascalvoc` |
 
 Using the script is pretty simple, since it only has three required parameters:
 ```
-usage: image-object-slicer [-h] [-v] [-f {pascalvoc}] [-p PADDING] [-w WORKERS] annotations images save
+usage: image-object-slicer [-h] [-v] [-f {pascalvoc,cvatimages}] [-p PADDING] [-w WORKERS] annotations images save
 
 Slice objects from images using annotation files
 
@@ -37,7 +38,7 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   -v, --version         show program's version number and exit
-  -f {pascalvoc}, --format {pascalvoc}
+  -f {pascalvoc,cvatimages}, --format {pascalvoc,cvatimages}
                         The format of the annotation files (default is pascalvoc)
   -p PADDING, --padding PADDING
                         The amount of padding (in pixels) to add to each image slice

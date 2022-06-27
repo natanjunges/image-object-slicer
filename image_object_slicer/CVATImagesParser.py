@@ -1,5 +1,4 @@
 # This file is part of image-object-slicer
-# Copyright (C) 2018  Jori Regter <joriregter@gmail.com>
 # Copyright (C) 2022  Natan Junges <natanajunges@gmail.com>
 #
 # image-object-slicer is free software: you can redistribute it and/or modify
@@ -17,30 +16,34 @@
 
 from xml.etree import ElementTree
 
-from .MultipleFileAnnotationParser import MultipleFileAnnotationParser
+from .SingleFileAnnotationParser import SingleFileAnnotationParser
 
-class PascalVOCParser(MultipleFileAnnotationParser):
-    """Class that abstracts the annotation parsing of the Pascal VOC format."""
+class CVATImagesParser(SingleFileAnnotationParser):
+    """Class that abstracts the annotation parsing of the CVAT for images format."""
 
-    extension = "xml"
+    glob = "annotations.xml"
 
     @classmethod
-    def parse_file(cls, file):
-        """Parse a Pascal VOC annotation file to a usable dict format."""
+    def split_file(cls, file):
+        """Split a specific annotation file into annotation items."""
         xml = ElementTree.parse(file)
-        name = xml.find("filename").text
+        return xml.findall("image")
+
+    @classmethod
+    def parse_item(cls, item):
+        """Parse a CVAT for images annotation item to a usable dict format."""
+        name = item.get("name")
         slices = []
         labels = set()
 
-        for obj in xml.iterfind("object"):
-            object_label = obj.find("name").text
-            object_bndbox = obj.find("bndbox")
+        for obj in item.iterfind("box"):
+            object_label = obj.get("label")
             labels.add(object_label)
             slices.append({
-                "xmin": float(object_bndbox.find("xmin").text),
-                "ymin": float(object_bndbox.find("ymin").text),
-                "xmax": float(object_bndbox.find("xmax").text),
-                "ymax": float(object_bndbox.find("ymax").text),
+                "xmin": float(obj.get("xtl")),
+                "ymin": float(obj.get("ytl")),
+                "xmax": float(obj.get("xbr")),
+                "ymax": float(obj.get("ybr")),
                 "label": object_label
             })
 

@@ -14,13 +14,18 @@
 # You should have received a copy of the GNU General Public License
 # along with image-object-slicer.  If not, see <https://www.gnu.org/licenses/>.
 
-class AnnotationParser:
-    """Base class that abstracts the annotation parsing."""
+class SingleFileAnnotationParser:
+    """Base class that abstracts the annotation parsing in a single file."""
 
-    extension = ""
-    """The extension of the file to be parsed."""
+    glob = ""
+    """The glob pattern of the file to be parsed."""
 
     @classmethod
-    def parse(cls, file):
-        """Parse a specific annotation file to a usable dict format."""
+    def split_file(cls, file):
+        """Split a specific annotation file into annotation items."""
+        return [None]
+
+    @classmethod
+    def parse_item(cls, item):
+        """Parse a specific annotation item to a usable dict format."""
         return {"name": "", "slices": [{"xmin": 0.0, "ymin": 0.0, "xmax": 0.0, "ymax": 0.0, "label": ""}], "labels": {""}}
