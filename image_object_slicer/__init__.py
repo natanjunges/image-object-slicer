@@ -28,9 +28,10 @@ from .PascalVOCParser import PascalVOCParser
 from .COCOParser import COCOParser
 from .CVATImagesParser import CVATImagesParser
 from .DatumaroParser import DatumaroParser
+from .KITTIParser import KITTIParser
 from .LabelMeParser import LabelMeParser
 
-__version__ = "1.7.0"
+__version__ = "1.8.0"
 
 formats = {
     # The first is always the default
@@ -38,6 +39,7 @@ formats = {
     "coco": COCOParser,
     "cvatimages": CVATImagesParser,
     "datumaro": DatumaroParser,
+    "kitti": KITTIParser,
     "labelme": LabelMeParser
 }
 

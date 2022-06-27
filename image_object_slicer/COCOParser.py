@@ -21,7 +21,7 @@ from .SingleFileAnnotationParser import SingleFileAnnotationParser
 class COCOParser(SingleFileAnnotationParser):
     """Class that abstracts the annotation parsing of the MS COCO Object Detection format."""
 
-    glob = "annotations/instances_*.json"
+    glob = "annotations/*_*.json"
 
     @classmethod
     def split_file(cls, file):
@@ -38,6 +38,14 @@ class COCOParser(SingleFileAnnotationParser):
         for annotation in data.get("annotations"):
             annotation["category_id"] = labels[annotation.get("category_id") - 1]
             items[annotation.get("image_id") - 1].get("annotations").append(annotation)
+
+        i = 0
+
+        while i  < len(items):
+            if len(items[i].get("annotations")) == 0:
+                items.pop(i)
+            else:
+                i += 1
 
         return items
 
