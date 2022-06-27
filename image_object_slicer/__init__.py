@@ -26,14 +26,16 @@ from .SingleFileAnnotationParser import SingleFileAnnotationParser
 from .MultipleFileAnnotationParser import MultipleFileAnnotationParser
 from .PascalVOCParser import PascalVOCParser
 from .CVATImagesParser import CVATImagesParser
+from .DatumaroParser import DatumaroParser
 from .LabelMeParser import LabelMeParser
 
-__version__ = "1.5.0"
+__version__ = "1.6.0"
 
 formats = {
     # The first is always the default
     "pascalvoc": PascalVOCParser,
     "cvatimages": CVATImagesParser,
+    "datumaro": DatumaroParser,
     "labelme": LabelMeParser
 }
 
@@ -111,7 +113,12 @@ def parse_annotation_files(format, files, workers):
     labels = set()
 
     if issubclass(format, SingleFileAnnotationParser):
-        split = format.split_file(files[0])
+        try:
+            split = format.split_file(files[0])
+        except Exception as e:
+            # Raise because this is the only file
+            print("Error parsing annotation file:")
+            raise e
 
         with Pool(workers) as pool:
             for parses in tqdm(pool.imap_unordered(parse_annotation_item, [(format, item) for item in split], workers), desc="Parsing annotation file", total=len(split)):
@@ -139,8 +146,26 @@ def slice_image(args):
     """Slice an image from slices."""
     images_path = args[0]
     name = args[1].split(".")
+
+    if len(name) == 1:
+        name = name[0]
+        files = list(pathlib.Path(images_path).glob(name + ".*"))
+
+        if len(files) > 0:
+            files = [file.name for file in files]
+
+        if len(files) == 0:
+            print("No file candidate found: {}.*".format(name))
+            return
+        elif len(files) == 1:
+            name = files[0].split(".")
+        else:
+            print("Multiple file candidates found: {}".format(files))
+            return
+
     extension = name[-1]
     name = ".".join(name[:-1])
+
     slices = args[2]
     padding = args[3]
     save_path = args[4]

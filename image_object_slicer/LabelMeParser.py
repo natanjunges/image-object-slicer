@@ -32,16 +32,19 @@ class LabelMeParser(MultipleFileAnnotationParser):
         labels = set()
 
         for obj in xml.iterfind("object"):
-            object_label = obj.find("name").text
-            object_bndbox = obj.find("polygon")
-            labels.add(object_label)
-            object_points = object_bndbox.findall("pt")
-            slices.append({
-                "xmin": float(object_points[0].find("x").text),
-                "ymin": float(object_points[0].find("y").text),
-                "xmax": float(object_points[2].find("x").text),
-                "ymax": float(object_points[2].find("y").text),
-                "label": object_label
-            })
+            object_type = obj.find("type")
+
+            if object_type is not None and object_type.text == "bounding_box":
+                object_label = obj.find("name").text
+                object_bndbox = obj.find("polygon")
+                object_points = object_bndbox.findall("pt")
+                labels.add(object_label)
+                slices.append({
+                    "xmin": float(object_points[0].find("x").text),
+                    "ymin": float(object_points[0].find("y").text),
+                    "xmax": float(object_points[2].find("x").text),
+                    "ymax": float(object_points[2].find("y").text),
+                    "label": object_label
+                })
 
         return {"name": name, "slices": slices, "labels": labels}
