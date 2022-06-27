@@ -22,7 +22,7 @@ from .MultipleFileAnnotationParser import MultipleFileAnnotationParser
 class PascalVOCParser(MultipleFileAnnotationParser):
     """Class that abstracts the annotation parsing of the Pascal VOC format."""
 
-    extension = "xml"
+    glob = "Annotations/*.xml"
 
     @classmethod
     def parse_file(cls, file):

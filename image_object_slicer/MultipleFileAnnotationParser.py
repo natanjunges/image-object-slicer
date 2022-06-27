@@ -17,8 +17,8 @@
 class MultipleFileAnnotationParser:
     """Base class that abstracts the annotation parsing in multiple files."""
 
-    extension = ""
-    """The extension of the file to be parsed."""
+    glob = ""
+    """The glob pattern of the files to be parsed."""
 
     @classmethod
     def parse_file(cls, file):

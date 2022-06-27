@@ -62,22 +62,16 @@ def main():
 
 def find_annotation_files(format, path):
     """Find all annotation files from a specific path."""
-    if issubclass(format, SingleFileAnnotationParser):
-        print("Finding annotation file")
-        files = list(pathlib.Path(path).glob(format.glob))
+    print("Finding annotation files: ", end="")
+    files = list(pathlib.Path(path).glob(format.glob))
 
-        if len(files) > 0:
-            files = [file.name for file in files]
+    if len(files) > 0:
+        files = [str(file) for file in files]
 
-        if len(files) > 1:
-            raise Exception("Could not find a unique annotation file: {}".format(files))
-    else:
-        files = []
+    if issubclass(format, SingleFileAnnotationParser) and len(files) > 1:
+        raise Exception("Could not find a unique annotation file: {}".format(files))
 
-        for file in tqdm(os.listdir(path), desc="Finding annotation files"):
-            if file.endswith("." + format.extension):
-                files.append(os.path.join(path, file))
-
+    print("{0}/{0}".format(len(files)))
     return files
 
 def parse_annotation_file(args):
