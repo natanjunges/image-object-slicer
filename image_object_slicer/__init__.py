@@ -31,7 +31,7 @@ from .DatumaroParser import DatumaroParser
 from .KITTIParser import KITTIParser
 from .LabelMeParser import LabelMeParser
 
-__version__ = "1.8.0"
+__version__ = "1.8.1"
 
 formats = {
     # The first is always the default

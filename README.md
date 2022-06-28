@@ -1,5 +1,5 @@
 # image-object-slicer
-Slice objects from images using annotation files. Convert an object detection dataset to an image classification one.
+Slice objects from images using annotation files. Convert an object detection dataset to an image classification one. To annotate the images to be used with this tool, we recommend [openvinotoolkit/cvat](https://github.com/openvinotoolkit/cvat).
 
 This is a fork of [gitlab.com/straighter/pascalvoc-to-image](https://gitlab.com/straighter/pascalvoc-to-image).
 
