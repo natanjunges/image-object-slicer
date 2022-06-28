@@ -4,7 +4,12 @@ Slice objects from images using annotation files. Convert an object detection da
 This is a fork of [gitlab.com/straighter/pascalvoc-to-image](https://gitlab.com/straighter/pascalvoc-to-image).
 
 ## Installation
-Download the latest stable wheel file from the [releases page](https://github.com/natanjunges/image-object-slicer/releases) and run:
+Install the latest stable version from [PyPI](https://pypi.org/project/image-object-slicer/) with:
+```shell
+sudo pip3 install image-object-slicer
+```
+
+Or download the latest stable wheel file from the [releases page](https://github.com/natanjunges/image-object-slicer/releases) and run:
 ```shell
 sudo pip3 install ./image_object_slicer-*-py3-none-any.whl
 ```
