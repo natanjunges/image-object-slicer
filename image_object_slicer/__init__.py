@@ -23,15 +23,15 @@ from multiprocessing import Pool, cpu_count
 import pathlib
 
 from .SingleFileAnnotationParser import SingleFileAnnotationParser
-from .MultipleFileAnnotationParser import MultipleFileAnnotationParser
 from .PascalVOCParser import PascalVOCParser
 from .COCOParser import COCOParser
 from .CVATImagesParser import CVATImagesParser
 from .DatumaroParser import DatumaroParser
 from .KITTIParser import KITTIParser
 from .LabelMeParser import LabelMeParser
+from .WIDERFaceParser import WIDERFaceParser
 
-__version__ = "1.8.2"
+__version__ = "1.9.0"
 
 formats = {
     # The first is always the default
@@ -40,7 +40,8 @@ formats = {
     "cvatimages": CVATImagesParser,
     "datumaro": DatumaroParser,
     "kitti": KITTIParser,
-    "labelme": LabelMeParser
+    "labelme": LabelMeParser,
+    "widerface": WIDERFaceParser
 }
 
 def main():
@@ -126,7 +127,7 @@ def parse_annotation_files(format, files, workers):
 
         with Pool(workers) as pool:
             for parses in tqdm(pool.imap_unordered(parse_annotation_item, [(format, item) for item in split], workers), desc="Parsing annotation file", total=len(split)):
-                if parses is not None and len(parses.get("slices")) > 0:
+                if parses is not None:
                     labels = labels.union(parses.get("labels"))
                     names.append(parses.get("name"))
                     slice_groups.append(parses.get("slices"))

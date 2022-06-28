@@ -32,10 +32,11 @@ Different formats of annotation files are supported:
 | [KITTI](http://www.cvlibs.net/datasets/kitti/) | `kitti` |
 | [LabelMe](http://labelme.csail.mit.edu/Release3.0) | `labelme` |
 | [Pascal VOC](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/devkit_doc.pdf) | `pascalvoc` |
+| [WIDER Face](http://shuoyang1213.me/WIDERFACE/) | `widerface` |
 
 Using the script is pretty simple, since it only has three required parameters:
 ```
-usage: image-object-slicer [-h] [-v] [-f {pascalvoc,coco,cvatimages,datumaro,kitti,labelme}] [-p PADDING] [-w WORKERS] annotations images save
+usage: image-object-slicer [-h] [-v] [-f {pascalvoc,coco,cvatimages,datumaro,kitti,labelme,widerface}] [-p PADDING] [-w WORKERS] annotations images save
 
 Slice objects from images using annotation files
 
@@ -47,7 +48,7 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   -v, --version         show program's version number and exit
-  -f {pascalvoc,coco,cvatimages,datumaro,kitti,labelme}, --format {pascalvoc,coco,cvatimages,datumaro,kitti,labelme}
+  -f {pascalvoc,coco,cvatimages,datumaro,kitti,labelme,widerface}, --format {pascalvoc,coco,cvatimages,datumaro,kitti,labelme,widerface}
                         The format of the annotation files (default is pascalvoc)
   -p PADDING, --padding PADDING
                         The amount of padding (in pixels) to add to each image slice

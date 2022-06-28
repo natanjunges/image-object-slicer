@@ -14,45 +14,51 @@
 # You should have received a copy of the GNU General Public License
 # along with image-object-slicer.  If not, see <https://www.gnu.org/licenses/>.
 
-from xml.etree import ElementTree
-
 from .SingleFileAnnotationParser import SingleFileAnnotationParser
 
-class CVATImagesParser(SingleFileAnnotationParser):
-    """Class that abstracts the annotation parsing of the CVAT for images format."""
+class WIDERFaceParser(SingleFileAnnotationParser):
+    """Class that abstracts the annotation parsing of the WIDER Face format."""
 
-    glob = "annotations.xml"
+    glob = "wider_face_split/wider_face_*_bbx_gt.txt"
 
     @classmethod
     def split_file(cls, file):
-        """Split a CVAT for images annotation file into annotation items."""
-        xml = ElementTree.parse(file)
-        items = xml.findall("image")
+        """Split a WIDER Face annotation file into annotation items."""
+        with open(file) as fp:
+            data = fp.readlines()
+
+        items = []
         i = 0
 
-        while i < len(items):
-            if items[i].find("box") is None:
-                items.pop(i)
-            else:
+        while i < len(data):
+            try:
+                item_len = int(data[i + 1])
+                item = data[i:i+2+item_len]
+                items.append(item)
+                i += 2 + item_len
+            except:
                 i += 1
 
         return items
 
     @classmethod
     def parse_item(cls, item):
-        """Parse a CVAT for images annotation item to a usable dict format."""
-        name = item.get("name")
+        """Parse a WIDER Face annotation item to a usable dict format."""
+        name = item[0].split("/")[-1].strip()
         slices = []
         labels = set()
 
-        for obj in item.iterfind("box"):
-            object_label = obj.get("label")
+        for obj in item[2:]:
+            obj_fields = obj.split()
+            object_label = obj_fields[10]
             labels.add(object_label)
+            xmin = float(obj_fields[0])
+            ymin = float(obj_fields[1])
             slices.append({
-                "xmin": float(obj.get("xtl")),
-                "ymin": float(obj.get("ytl")),
-                "xmax": float(obj.get("xbr")),
-                "ymax": float(obj.get("ybr")),
+                "xmin": xmin,
+                "ymin": ymin,
+                "xmax": xmin + float(obj_fields[2]),
+                "ymax": ymin + float(obj_fields[3]),
                 "label": object_label
             })
 
