@@ -21,7 +21,7 @@ from .MultipleFileAnnotationParser import MultipleFileAnnotationParser
 class LabelMeParser(MultipleFileAnnotationParser):
     """Class that abstracts the annotation parsing of the LabelMe format."""
 
-    glob = "*/*.xml"
+    glob = "*/**/*.xml"
 
     @classmethod
     def parse_file(cls, file, labels):

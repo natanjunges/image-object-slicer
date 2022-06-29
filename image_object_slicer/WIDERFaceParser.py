@@ -50,7 +50,7 @@ class WIDERFaceParser(SingleFileAnnotationParser):
 
         for obj in item[2:]:
             obj_fields = obj.split()
-            object_label = obj_fields[10]
+            object_label = obj_fields[10] if len(obj_fields) > 10 else "face"
             labels.add(object_label)
             xmin = float(obj_fields[0])
             ymin = float(obj_fields[1])

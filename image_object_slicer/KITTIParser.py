@@ -21,7 +21,7 @@ from .MultipleFileAnnotationParser import MultipleFileAnnotationParser
 class KITTIParser(MultipleFileAnnotationParser):
     """Class that abstracts the annotation parsing of the KITTI format."""
 
-    glob = "*/label_2/*.txt"
+    glob = "*/label_2/**/*.txt"
 
     @classmethod
     def parse_file(cls, file, labels):

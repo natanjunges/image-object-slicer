@@ -49,7 +49,7 @@ class DatumaroParser(SingleFileAnnotationParser):
     @classmethod
     def parse_item(cls, item):
         """Parse a Datumaro annotation item to a usable dict format."""
-        name = item.get("id")
+        name = item.get("id").split("/")[-1]
         slices = []
         labels = set()
 

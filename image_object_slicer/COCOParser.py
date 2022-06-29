@@ -32,7 +32,7 @@ class COCOParser(SingleFileAnnotationParser):
         labels = data.get("categories")
         labels = [label.get("name") for label in labels]
         images = data.get("images")
-        images = [image.get("file_name") for image in images]
+        images = [image.get("file_name").split("/")[-1] for image in images]
         items = {}
 
         for annotation in data.get("annotations"):

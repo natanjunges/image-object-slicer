@@ -21,7 +21,7 @@ from .MultipleFileAnnotationParser import MultipleFileAnnotationParser
 class YOLOParser(MultipleFileAnnotationParser):
     """Class that abstracts the annotation parsing of the YOLO format."""
 
-    glob = "obj_*_data/*.txt"
+    glob = "obj_*_data/**/*.txt"
     labels = "obj.names"
 
     @classmethod

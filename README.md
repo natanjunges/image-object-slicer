@@ -31,7 +31,6 @@ Different formats of annotation files are supported:
 | [Datumaro](https://github.com/openvinotoolkit/datumaro) | `datumaro` |
 | [KITTI](http://cvlibs.net/datasets/kitti/) | `kitti` |
 | [LabelMe](http://labelme.csail.mit.edu/Release3.0) | `labelme` |
-| [MOT](https://motchallenge.net/) | `mot` |
 | [Open Images](https://storage.googleapis.com/openimages/web/index.html) | `openimages` |
 | [Pascal VOC](http://host.robots.ox.ac.uk/pascal/VOC/) | `pascalvoc` |
 | [WIDER Face](https://shuoyang1213.me/WIDERFACE/) | `widerface` |
@@ -39,7 +38,7 @@ Different formats of annotation files are supported:
 
 Using the script is pretty simple, since it only has three required parameters:
 ```
-usage: image-object-slicer [-h] [-v] [-f {pascalvoc,coco,cvatimages,datumaro,kitti,labelme,mot,openimages,widerface,yolo}] [-p PADDING] [-w WORKERS] annotations images save
+usage: image-object-slicer [-h] [-v] [-f {pascalvoc,coco,cvatimages,datumaro,kitti,labelme,openimages,widerface,yolo}] [-p PADDING] [-w WORKERS] annotations images save
 
 Slice objects from images using annotation files
 
@@ -51,7 +50,7 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   -v, --version         show program's version number and exit
-  -f {pascalvoc,coco,cvatimages,datumaro,kitti,labelme,mot,openimages,widerface,yolo}, --format {pascalvoc,coco,cvatimages,datumaro,kitti,labelme,mot,openimages,widerface,yolo}
+  -f {pascalvoc,coco,cvatimages,datumaro,kitti,labelme,openimages,widerface,yolo}, --format {pascalvoc,coco,cvatimages,datumaro,kitti,labelme,openimages,widerface,yolo}
                         The format of the annotation files (default is pascalvoc)
   -p PADDING, --padding PADDING
                         The amount of padding (in pixels) to add to each image slice

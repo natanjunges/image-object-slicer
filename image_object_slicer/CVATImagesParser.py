@@ -41,7 +41,7 @@ class CVATImagesParser(SingleFileAnnotationParser):
     @classmethod
     def parse_item(cls, item):
         """Parse a CVAT for images annotation item to a usable dict format."""
-        name = item.get("name")
+        name = item.get("name").split("/")[-1]
         slices = []
         labels = set()
 

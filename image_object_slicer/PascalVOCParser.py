@@ -22,13 +22,13 @@ from .MultipleFileAnnotationParser import MultipleFileAnnotationParser
 class PascalVOCParser(MultipleFileAnnotationParser):
     """Class that abstracts the annotation parsing of the Pascal VOC format."""
 
-    glob = "Annotations/*.xml"
+    glob = "Annotations/**/*.xml"
 
     @classmethod
     def parse_file(cls, file, labels):
         """Parse a Pascal VOC annotation file to a usable dict format."""
         data = ElementTree.parse(file)
-        name = data.find("filename").text
+        name = data.find("filename").text.split("/")[-1]
         slices = []
         labels = set()
 

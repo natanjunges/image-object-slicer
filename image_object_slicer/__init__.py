@@ -29,12 +29,11 @@ from .CVATImagesParser import CVATImagesParser
 from .DatumaroParser import DatumaroParser
 from .KITTIParser import KITTIParser
 from .LabelMeParser import LabelMeParser
-from .MOTParser import MOTParser
 from .OpenImagesParser import OpenImagesParser
 from .WIDERFaceParser import WIDERFaceParser
 from .YOLOParser import YOLOParser
 
-__version__ = "1.12.0"
+__version__ = "1.12.1"
 
 formats = {
     # The first is always the default
@@ -44,7 +43,6 @@ formats = {
     "datumaro": DatumaroParser,
     "kitti": KITTIParser,
     "labelme": LabelMeParser,
-    "mot": MOTParser,
     "openimages": OpenImagesParser,
     "widerface": WIDERFaceParser,
     "yolo": YOLOParser
@@ -88,11 +86,13 @@ def find_annotation_files(format, path):
 
     print("{0}/{0}".format(len(files)))
 
-    if format.labels is not None:
+    if len(files) > 0 and format.labels is not None:
         print("Finding labels file")
         labels = list(pathlib.Path(path).glob(format.labels))
 
-        if len(labels) > 0:
+        if len(labels) == 0:
+            raise Exception("Could not find labels file: {}".format(format.labels))
+        else:
             labels = [str(label) for label in labels]
 
         if len(labels) > 1:

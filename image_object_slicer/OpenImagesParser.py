@@ -31,6 +31,7 @@ class OpenImagesParser(SingleFileAnnotationParser):
             items = {}
 
             for item in data:
+                item["ImageID"] = item.get("ImageID").split("/")[-1]
                 items[item.get("ImageID")] = items.get(item.get("ImageID"), {"image": item.get("ImageID"), "annotations": []})
                 items[item.get("ImageID")].get("annotations").append(item)
 
