@@ -22,7 +22,7 @@ class WIDERFaceParser(SingleFileAnnotationParser):
     glob = "wider_face_split/wider_face_*_bbx_gt.txt"
 
     @classmethod
-    def split_file(cls, file):
+    def split_file(cls, file, labels):
         """Split a WIDER Face annotation file into annotation items."""
         with open(file) as fp:
             data = fp.readlines()

@@ -29,10 +29,11 @@ from .CVATImagesParser import CVATImagesParser
 from .DatumaroParser import DatumaroParser
 from .KITTIParser import KITTIParser
 from .LabelMeParser import LabelMeParser
+from .MOTParser import MOTParser
 from .OpenImagesParser import OpenImagesParser
 from .WIDERFaceParser import WIDERFaceParser
 
-__version__ = "1.10.0"
+__version__ = "1.11.0"
 
 formats = {
     # The first is always the default
@@ -42,6 +43,7 @@ formats = {
     "datumaro": DatumaroParser,
     "kitti": KITTIParser,
     "labelme": LabelMeParser,
+    "mot": MOTParser,
     "openimages": OpenImagesParser,
     "widerface": WIDERFaceParser
 }
@@ -59,7 +61,7 @@ def main():
     args = parser.parse_args()
     annotation_files = find_annotation_files(formats.get(args.format), args.annotations)
 
-    if len(annotation_files) > 0:
+    if len(annotation_files[0]) > 0:
         parsed_annotation_files = parse_annotation_files(formats.get(args.format), annotation_files, args.workers)
 
         if len(parsed_annotation_files) > 0:
@@ -83,15 +85,29 @@ def find_annotation_files(format, path):
         raise Exception("Could not find a unique annotation file: {}".format(files))
 
     print("{0}/{0}".format(len(files)))
-    return files
+
+    if format.labels is not None:
+        print("Finding labels file")
+        labels = list(pathlib.Path(path).glob(format.labels))
+
+        if len(labels) > 0:
+            labels = [str(label) for label in labels]
+
+        if len(labels) > 1:
+            raise Exception("Could not find a unique labels file: {}".format(labels))
+
+        return (files, labels[0])
+    else:
+        return (files, None)
 
 def parse_annotation_file(args):
     """Parse a specific annotation file to a usable dict format."""
     format = args[0]
     file = args[1]
+    labels = args[2]
 
     try:
-        parse = format.parse_file(file)
+        parse = format.parse_file(file, labels)
         # Sort left-to-right, top-to-bottom
         parse.get("slices").sort(key=lambda slice: (slice.get("xmin"), slice.get("ymin"), slice.get("xmax"), slice.get("ymax")))
         return parse
@@ -118,10 +134,14 @@ def parse_annotation_files(format, files, workers):
     names = []
     slice_groups = []
     labels = set()
+    labels_list = None
+
+    if files[1] is not None:
+        labels_list = format.parse_labels(files[1])
 
     if issubclass(format, SingleFileAnnotationParser):
         try:
-            split = format.split_file(files[0])
+            split = format.split_file(files[0][0], labels_list)
         except Exception as e:
             # Raise because this is the only file
             print("Error parsing annotation file:")
@@ -135,7 +155,7 @@ def parse_annotation_files(format, files, workers):
                     slice_groups.append(parses.get("slices"))
     else:
         with Pool(workers) as pool:
-            for parses in tqdm(pool.imap_unordered(parse_annotation_file, [(format, file) for file in files], workers), desc="Parsing annotation files", total=len(files)):
+            for parses in tqdm(pool.imap_unordered(parse_annotation_file, [(format, file, labels_list) for file in files[0]], workers), desc="Parsing annotation files", total=len(files[0])):
                 if parses is not None and len(parses.get("slices")) > 0:
                     labels = labels.union(parses.get("labels"))
                     names.append(parses.get("name"))

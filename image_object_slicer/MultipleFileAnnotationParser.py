@@ -20,8 +20,16 @@ class MultipleFileAnnotationParser:
     glob = ""
     """The glob pattern of the files to be parsed."""
 
+    labels = None
+    """The glob pattern of the file with labels information."""
+
     @classmethod
-    def parse_file(cls, file):
+    def parse_labels(cls, file):
+        """Parse a labels file into a list of labels."""
+        return [""]
+
+    @classmethod
+    def parse_file(cls, file, labels):
         """Parse a specific annotation file to a usable dict format."""
         # Floating values for the coordinates are relative to the image size
         return {"name": "", "slices": [{"xmin": 0, "ymin": 0, "xmax": 0, "ymax": 0, "label": ""}], "labels": {""}}

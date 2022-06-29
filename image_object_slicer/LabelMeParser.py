@@ -24,7 +24,7 @@ class LabelMeParser(MultipleFileAnnotationParser):
     glob = "*/*.xml"
 
     @classmethod
-    def parse_file(cls, file):
+    def parse_file(cls, file, labels):
         """Parse a LabelMe annotation file to a usable dict format."""
         data = ElementTree.parse(file)
         name = data.find("filename").text

@@ -18,39 +18,50 @@ from csv import DictReader
 
 from .SingleFileAnnotationParser import SingleFileAnnotationParser
 
-class OpenImagesParser(SingleFileAnnotationParser):
-    """Class that abstracts the annotation parsing of the Open Images format."""
+class MOTParser(SingleFileAnnotationParser):
+    """Class that abstracts the annotation parsing of the MOT format."""
 
-    glob = "annotations/*-annotations-bbox.csv"
+    glob = "gt/gt.txt"
+    labels = "gt/labels.txt"
+
+    @classmethod
+    def parse_labels(cls, file):
+        with open(file) as fp:
+            labels = fp.readlines()
+
+        return [label.strip() for label in labels]
 
     @classmethod
     def split_file(cls, file, labels):
-        """Split an Open Images annotation file into annotation items."""
+        """Split a MOT annotation file into annotation items."""
         with open(file, newline="") as fp:
-            data = DictReader(fp)
+            data = DictReader(fp, ["frame_id", "track_id", "x", "y", "w", "h", "not_ignored", "class_id", "visibility", "skipped"])
             items = {}
 
             for item in data:
-                items[item.get("ImageID")] = items.get(item.get("ImageID"), {"image": item.get("ImageID"), "annotations": []})
-                items[item.get("ImageID")].get("annotations").append(item)
+                item["class_id"] = labels[int(item.get("class_id")) - 1]
+                items[item.get("frame_id")] = items.get(item.get("frame_id"), {"image": item.get("frame_id"), "annotations": []})
+                items[item.get("frame_id")].get("annotations").append(item)
 
             return list(items.values())
 
     @classmethod
     def parse_item(cls, item):
-        """Parse an Open Images annotation item to a usable dict format."""
+        """Parse a MOT annotation item to a usable dict format."""
         name = item.get("image")
         slices = []
         labels = set()
 
         for obj in item.get("annotations"):
-            object_label = obj.get("LabelName")
+            object_label = obj.get("class_id")
             labels.add(object_label)
+            xmin = float(obj.get("x"))
+            ymin = float(obj.get("y"))
             slices.append({
-                "xmin": float(obj.get("XMin")),
-                "ymin": float(obj.get("YMin")),
-                "xmax": float(obj.get("XMax")),
-                "ymax": float(obj.get("YMax")),
+                "xmin": round(xmin),
+                "ymin": round(ymin),
+                "xmax": round(xmin + float(obj.get("w"))),
+                "ymax": round(ymin + float(obj.get("h"))),
                 "label": object_label
             })
 

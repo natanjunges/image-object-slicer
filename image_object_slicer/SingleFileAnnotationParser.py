@@ -20,8 +20,16 @@ class SingleFileAnnotationParser:
     glob = ""
     """The glob pattern of the file to be parsed."""
 
+    labels = None
+    """The glob pattern of the file with labels information."""
+
     @classmethod
-    def split_file(cls, file):
+    def parse_labels(cls, file):
+        """Parse a labels file into a list of labels."""
+        return [""]
+
+    @classmethod
+    def split_file(cls, file, labels):
         """Split a specific annotation file into annotation items."""
         return [None]
 

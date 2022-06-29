@@ -24,7 +24,7 @@ class CVATImagesParser(SingleFileAnnotationParser):
     glob = "annotations.xml"
 
     @classmethod
-    def split_file(cls, file):
+    def split_file(cls, file, labels):
         """Split a CVAT for images annotation file into annotation items."""
         data = ElementTree.parse(file)
         items = data.findall("image")

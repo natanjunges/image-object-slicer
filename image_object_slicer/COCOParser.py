@@ -24,7 +24,7 @@ class COCOParser(SingleFileAnnotationParser):
     glob = "annotations/*_*.json"
 
     @classmethod
-    def split_file(cls, file):
+    def split_file(cls, file, labels):
         """Split an MS COCO Object Detection annotation file into annotation items."""
         with open(file) as fp:
             data = json.load(fp)
@@ -33,21 +33,14 @@ class COCOParser(SingleFileAnnotationParser):
         labels = [label.get("name") for label in labels]
         images = data.get("images")
         images = [image.get("file_name") for image in images]
-        items = [{"image": image, "annotations": []} for image in images]
+        items = {}
 
         for annotation in data.get("annotations"):
             annotation["category_id"] = labels[annotation.get("category_id") - 1]
-            items[annotation.get("image_id") - 1].get("annotations").append(annotation)
+            items[images[annotation.get("image_id") - 1]] = items.get(images[annotation.get("image_id") - 1], {"image": images[annotation.get("image_id") - 1], "annotations": []})
+            items[images[annotation.get("image_id") - 1]].get("annotations").append(annotation)
 
-        i = 0
-
-        while i  < len(items):
-            if len(items[i].get("annotations")) == 0:
-                items.pop(i)
-            else:
-                i += 1
-
-        return items
+        return list(items.values())
 
     @classmethod
     def parse_item(cls, item):

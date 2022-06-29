@@ -24,7 +24,7 @@ class DatumaroParser(SingleFileAnnotationParser):
     glob = "annotations/*.json"
 
     @classmethod
-    def split_file(cls, file):
+    def split_file(cls, file, labels):
         """Split a Datumaro annotation file into annotation items."""
         with open(file) as fp:
             data = json.load(fp)

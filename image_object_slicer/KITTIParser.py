@@ -14,6 +14,8 @@
 # You should have received a copy of the GNU General Public License
 # along with image-object-slicer.  If not, see <https://www.gnu.org/licenses/>.
 
+from csv import DictReader
+
 from .MultipleFileAnnotationParser import MultipleFileAnnotationParser
 
 class KITTIParser(MultipleFileAnnotationParser):
@@ -22,25 +24,23 @@ class KITTIParser(MultipleFileAnnotationParser):
     glob = "*/label_2/*.txt"
 
     @classmethod
-    def parse_file(cls, file):
+    def parse_file(cls, file, labels):
         """Parse a KITTI annotation file to a usable dict format."""
-        with open(file) as fp:
-            data = fp.readlines()
+        with open(file, newline="") as fp:
+            data = DictReader(fp, ["type", "truncated", "occluded", "alpha", "bbox_left", "bbox_top", "bbox_right", "bbox_bottom", "dimensions_height", "dimensions_width", "dimensions_length", "location_x", "location_y", "location_z", "rotation_y", "score"], delimiter=" ")
+            name = ".".join(file.split("/")[-1].split(".")[:-1])
+            slices = []
+            labels = set()
 
-        name = ".".join(file.split("/")[-1].split(".")[:-1])
-        slices = []
-        labels = set()
+            for obj in data:
+                object_label = obj.get("type")
+                labels.add(object_label)
+                slices.append({
+                    "xmin": round(float(obj.get("bbox_left"))),
+                    "ymin": round(float(obj.get("bbox_top"))),
+                    "xmax": round(float(obj.get("bbox_right"))),
+                    "ymax": round(float(obj.get("bbox_bottom"))),
+                    "label": object_label
+                })
 
-        for obj in data:
-            obj_fields = obj.split()
-            object_label = obj_fields[0]
-            labels.add(object_label)
-            slices.append({
-                "xmin": round(float(obj_fields[4])),
-                "ymin": round(float(obj_fields[5])),
-                "xmax": round(float(obj_fields[6])),
-                "ymax": round(float(obj_fields[7])),
-                "label": object_label
-            })
-
-        return {"name": name, "slices": slices, "labels": labels}
+            return {"name": name, "slices": slices, "labels": labels}
