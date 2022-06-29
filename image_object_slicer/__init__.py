@@ -32,8 +32,9 @@ from .LabelMeParser import LabelMeParser
 from .MOTParser import MOTParser
 from .OpenImagesParser import OpenImagesParser
 from .WIDERFaceParser import WIDERFaceParser
+from .YOLOParser import YOLOParser
 
-__version__ = "1.11.0"
+__version__ = "1.12.0"
 
 formats = {
     # The first is always the default
@@ -45,7 +46,8 @@ formats = {
     "labelme": LabelMeParser,
     "mot": MOTParser,
     "openimages": OpenImagesParser,
-    "widerface": WIDERFaceParser
+    "widerface": WIDERFaceParser,
+    "yolo": YOLOParser
 }
 
 def main():
