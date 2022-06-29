@@ -26,12 +26,12 @@ class LabelMeParser(MultipleFileAnnotationParser):
     @classmethod
     def parse_file(cls, file):
         """Parse a LabelMe annotation file to a usable dict format."""
-        xml = ElementTree.parse(file)
-        name = xml.find("filename").text
+        data = ElementTree.parse(file)
+        name = data.find("filename").text
         slices = []
         labels = set()
 
-        for obj in xml.iterfind("object"):
+        for obj in data.iterfind("object"):
             object_type = obj.find("type")
 
             if object_type is not None and object_type.text == "bounding_box":
@@ -40,10 +40,10 @@ class LabelMeParser(MultipleFileAnnotationParser):
                 object_points = object_bndbox.findall("pt")
                 labels.add(object_label)
                 slices.append({
-                    "xmin": float(object_points[0].find("x").text),
-                    "ymin": float(object_points[0].find("y").text),
-                    "xmax": float(object_points[2].find("x").text),
-                    "ymax": float(object_points[2].find("y").text),
+                    "xmin": round(float(object_points[0].find("x").text)),
+                    "ymin": round(float(object_points[0].find("y").text)),
+                    "xmax": round(float(object_points[2].find("x").text)),
+                    "ymax": round(float(object_points[2].find("y").text)),
                     "label": object_label
                 })
 

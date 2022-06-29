@@ -29,9 +29,10 @@ from .CVATImagesParser import CVATImagesParser
 from .DatumaroParser import DatumaroParser
 from .KITTIParser import KITTIParser
 from .LabelMeParser import LabelMeParser
+from .OpenImagesParser import OpenImagesParser
 from .WIDERFaceParser import WIDERFaceParser
 
-__version__ = "1.9.0"
+__version__ = "1.10.0"
 
 formats = {
     # The first is always the default
@@ -41,6 +42,7 @@ formats = {
     "datumaro": DatumaroParser,
     "kitti": KITTIParser,
     "labelme": LabelMeParser,
+    "openimages": OpenImagesParser,
     "widerface": WIDERFaceParser
 }
 
@@ -91,7 +93,7 @@ def parse_annotation_file(args):
     try:
         parse = format.parse_file(file)
         # Sort left-to-right, top-to-bottom
-        parse.get("slices").sort(key=lambda slice: (int(round(slice.get("xmin"))), int(round(slice.get("ymin"))), int(round(slice.get("xmax"))), int(round(slice.get("ymax")))))
+        parse.get("slices").sort(key=lambda slice: (slice.get("xmin"), slice.get("ymin"), slice.get("xmax"), slice.get("ymax")))
         return parse
     except Exception as e:
         # Just error if a single file cannot be read
@@ -105,7 +107,7 @@ def parse_annotation_item(args):
     try:
         parse = format.parse_item(item)
         # Sort left-to-right, top-to-bottom
-        parse.get("slices").sort(key=lambda slice: (int(round(slice.get("xmin"))), int(round(slice.get("ymin"))), int(round(slice.get("xmax"))), int(round(slice.get("ymax")))))
+        parse.get("slices").sort(key=lambda slice: (slice.get("xmin"), slice.get("ymin"), slice.get("xmax"), slice.get("ymax")))
         return parse
     except Exception as e:
         # Just error if a single item cannot be read
@@ -177,6 +179,20 @@ def slice_image(args):
     image = Image.open(os.path.join(images_path, "{}.{}".format(name, extension)))
 
     for i, slice in enumerate(slices):
+        # Floating values for the coordinates are relative to the image size
+
+        if type(slice.get("xmin")) is float:
+            slice["xmin"] = round(slice.get("xmin") * image.width)
+
+        if type(slice.get("ymin")) is float:
+            slice["ymin"] = round(slice.get("ymin") * image.height)
+
+        if type(slice.get("xmax")) is float:
+            slice["xmax"] = round(slice.get("xmax") * image.width)
+
+        if type(slice.get("ymax")) is float:
+            slice["ymax"] = round(slice.get("ymax") * image.height)
+
         # Create the bounding box to slice from
         bndbox = (max(0, slice.get("xmin") - padding), max(0, slice.get("ymin") - padding), min(slice.get("xmax") + padding, image.width), min(slice.get("ymax") + padding, image.height))
         image_slice = image.crop(bndbox)

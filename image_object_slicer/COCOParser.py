@@ -25,7 +25,7 @@ class COCOParser(SingleFileAnnotationParser):
 
     @classmethod
     def split_file(cls, file):
-        """Split a MS COCO Object Detection annotation file into annotation items."""
+        """Split an MS COCO Object Detection annotation file into annotation items."""
         with open(file) as fp:
             data = json.load(fp)
 
@@ -51,7 +51,7 @@ class COCOParser(SingleFileAnnotationParser):
 
     @classmethod
     def parse_item(cls, item):
-        """Parse a MS COCO Object Detection annotation item to a usable dict format."""
+        """Parse an MS COCO Object Detection annotation item to a usable dict format."""
         name = item.get("image")
         slices = []
         labels = set()
@@ -62,10 +62,10 @@ class COCOParser(SingleFileAnnotationParser):
                 object_bndbox = obj.get("bbox")
                 labels.add(object_label)
                 slices.append({
-                    "xmin": object_bndbox[0],
-                    "ymin": object_bndbox[1],
-                    "xmax": object_bndbox[0] + object_bndbox[2],
-                    "ymax": object_bndbox[1] + object_bndbox[3],
+                    "xmin": round(object_bndbox[0]),
+                    "ymin": round(object_bndbox[1]),
+                    "xmax": round(object_bndbox[0] + object_bndbox[2]),
+                    "ymax": round(object_bndbox[1] + object_bndbox[3]),
                     "label": object_label
                 })
 

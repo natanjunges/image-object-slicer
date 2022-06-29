@@ -36,10 +36,10 @@ class KITTIParser(MultipleFileAnnotationParser):
             object_label = obj_fields[0]
             labels.add(object_label)
             slices.append({
-                "xmin": float(obj_fields[4]),
-                "ymin": float(obj_fields[5]),
-                "xmax": float(obj_fields[6]),
-                "ymax": float(obj_fields[7]),
+                "xmin": round(float(obj_fields[4])),
+                "ymin": round(float(obj_fields[5])),
+                "xmax": round(float(obj_fields[6])),
+                "ymax": round(float(obj_fields[7])),
                 "label": object_label
             })
 

@@ -14,51 +14,43 @@
 # You should have received a copy of the GNU General Public License
 # along with image-object-slicer.  If not, see <https://www.gnu.org/licenses/>.
 
+from csv import DictReader
+
 from .SingleFileAnnotationParser import SingleFileAnnotationParser
 
-class WIDERFaceParser(SingleFileAnnotationParser):
-    """Class that abstracts the annotation parsing of the WIDER Face format."""
+class OpenImagesParser(SingleFileAnnotationParser):
+    """Class that abstracts the annotation parsing of the Open Images format."""
 
-    glob = "wider_face_split/wider_face_*_bbx_gt.txt"
+    glob = "annotations/*-annotations-bbox.csv"
 
     @classmethod
     def split_file(cls, file):
-        """Split a WIDER Face annotation file into annotation items."""
-        with open(file) as fp:
-            data = fp.readlines()
+        """Split an Open Images annotation file into annotation items."""
+        with open(file, newline="") as fp:
+            data = DictReader(fp)
+            items = {}
 
-        items = []
-        i = 0
+            for item in data:
+                items[item.get("ImageID")] = items.get(item.get("ImageID"), {"image": item.get("ImageID"), "annotations": []})
+                items[item.get("ImageID")].get("annotations").append(item)
 
-        while i < len(data):
-            try:
-                item_len = int(data[i + 1])
-                item = data[i:i+2+item_len]
-                items.append(item)
-                i += 2 + item_len
-            except:
-                i += 1
-
-        return items
+            return list(items.values())
 
     @classmethod
     def parse_item(cls, item):
-        """Parse a WIDER Face annotation item to a usable dict format."""
-        name = item[0].strip().split("/")[-1]
+        """Parse an Open Images annotation item to a usable dict format."""
+        name = item.get("image")
         slices = []
         labels = set()
 
-        for obj in item[2:]:
-            obj_fields = obj.split()
-            object_label = obj_fields[10]
+        for obj in item.get("annotations"):
+            object_label = obj.get("LabelName")
             labels.add(object_label)
-            xmin = float(obj_fields[0])
-            ymin = float(obj_fields[1])
             slices.append({
-                "xmin": round(xmin),
-                "ymin": round(ymin),
-                "xmax": round(xmin + float(obj_fields[2])),
-                "ymax": round(ymin + float(obj_fields[3])),
+                "xmin": float(obj.get("XMin")),
+                "ymin": float(obj.get("YMin")),
+                "xmax": float(obj.get("XMax")),
+                "ymax": float(obj.get("YMax")),
                 "label": object_label
             })
 

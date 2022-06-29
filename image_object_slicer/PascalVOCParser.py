@@ -27,20 +27,20 @@ class PascalVOCParser(MultipleFileAnnotationParser):
     @classmethod
     def parse_file(cls, file):
         """Parse a Pascal VOC annotation file to a usable dict format."""
-        xml = ElementTree.parse(file)
-        name = xml.find("filename").text
+        data = ElementTree.parse(file)
+        name = data.find("filename").text
         slices = []
         labels = set()
 
-        for obj in xml.iterfind("object"):
+        for obj in data.iterfind("object"):
             object_label = obj.find("name").text
             object_bndbox = obj.find("bndbox")
             labels.add(object_label)
             slices.append({
-                "xmin": float(object_bndbox.find("xmin").text),
-                "ymin": float(object_bndbox.find("ymin").text),
-                "xmax": float(object_bndbox.find("xmax").text),
-                "ymax": float(object_bndbox.find("ymax").text),
+                "xmin": round(float(object_bndbox.find("xmin").text)),
+                "ymin": round(float(object_bndbox.find("ymin").text)),
+                "xmax": round(float(object_bndbox.find("xmax").text)),
+                "ymax": round(float(object_bndbox.find("ymax").text)),
                 "label": object_label
             })
 

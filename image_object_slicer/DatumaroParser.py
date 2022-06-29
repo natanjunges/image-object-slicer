@@ -59,10 +59,10 @@ class DatumaroParser(SingleFileAnnotationParser):
                 object_bndbox = obj.get("bbox")
                 labels.add(object_label)
                 slices.append({
-                    "xmin": object_bndbox[0],
-                    "ymin": object_bndbox[1],
-                    "xmax": object_bndbox[0] + object_bndbox[2],
-                    "ymax": object_bndbox[1] + object_bndbox[3],
+                    "xmin": round(object_bndbox[0]),
+                    "ymin": round(object_bndbox[1]),
+                    "xmax": round(object_bndbox[0] + object_bndbox[2]),
+                    "ymax": round(object_bndbox[1] + object_bndbox[3]),
                     "label": object_label
                 })
 

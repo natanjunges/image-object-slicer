@@ -23,4 +23,5 @@ class MultipleFileAnnotationParser:
     @classmethod
     def parse_file(cls, file):
         """Parse a specific annotation file to a usable dict format."""
-        return {"name": "", "slices": [{"xmin": 0.0, "ymin": 0.0, "xmax": 0.0, "ymax": 0.0, "label": ""}], "labels": {""}}
+        # Floating values for the coordinates are relative to the image size
+        return {"name": "", "slices": [{"xmin": 0, "ymin": 0, "xmax": 0, "ymax": 0, "label": ""}], "labels": {""}}

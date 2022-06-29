@@ -26,8 +26,8 @@ class CVATImagesParser(SingleFileAnnotationParser):
     @classmethod
     def split_file(cls, file):
         """Split a CVAT for images annotation file into annotation items."""
-        xml = ElementTree.parse(file)
-        items = xml.findall("image")
+        data = ElementTree.parse(file)
+        items = data.findall("image")
         i = 0
 
         while i < len(items):
@@ -49,10 +49,10 @@ class CVATImagesParser(SingleFileAnnotationParser):
             object_label = obj.get("label")
             labels.add(object_label)
             slices.append({
-                "xmin": float(obj.get("xtl")),
-                "ymin": float(obj.get("ytl")),
-                "xmax": float(obj.get("xbr")),
-                "ymax": float(obj.get("ybr")),
+                "xmin": round(float(obj.get("xtl"))),
+                "ymin": round(float(obj.get("ytl"))),
+                "xmax": round(float(obj.get("xbr"))),
+                "ymax": round(float(obj.get("ybr"))),
                 "label": object_label
             })
 
