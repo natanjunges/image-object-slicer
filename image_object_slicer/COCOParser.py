@@ -31,7 +31,6 @@ class COCOParser(SingleFileAnnotationParser):
 
         labels = {label.get("id"): label.get("name") for label in data.get("categories")}
         images = {image.get("id"): image.get("file_name").split("/")[-1] for image in data.get("images")}
-        items = []
         item = None
 
         for annotation in data.get("annotations"):
@@ -42,16 +41,14 @@ class COCOParser(SingleFileAnnotationParser):
                 if item.get("image") == annotation.get("image_id"):
                     item.get("annotations").append(annotation)
                 else:
-                    items.append(item)
+                    yield item
                     item = None
 
             if item is None:
                 item = {"image": annotation.get("image_id"), "annotations": [annotation]}
 
         if item is not None:
-            items.append(item)
-
-        return items
+            yield item
 
     @classmethod
     def parse_item(cls, item):

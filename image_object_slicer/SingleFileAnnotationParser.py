@@ -31,7 +31,7 @@ class SingleFileAnnotationParser:
     @classmethod
     def split_file(cls, file, labels):
         """Split a specific annotation file into annotation items."""
-        return [None]
+        yield None
 
     @classmethod
     def parse_item(cls, item):

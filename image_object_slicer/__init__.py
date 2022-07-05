@@ -33,7 +33,7 @@ from .OpenImagesParser import OpenImagesParser
 from .WIDERFaceParser import WIDERFaceParser
 from .YOLOParser import YOLOParser
 
-__version__ = "1.12.2"
+__version__ = "1.12.3"
 
 formats = {
     # The first is always the default
@@ -150,14 +150,14 @@ def parse_annotation_files(format, files, workers):
             raise e
 
         with Pool(workers) as pool:
-            for parses in tqdm(pool.imap_unordered(parse_annotation_item, [(format, item) for item in split]), desc="Parsing annotation file", total=len(split)):
+            for parses in tqdm(pool.imap_unordered(parse_annotation_item, ((format, item) for item in split)), desc="Parsing annotation file"):
                 if parses is not None:
                     labels = labels.union(parses.get("labels"))
                     names.append(parses.get("name"))
                     slice_groups.append(parses.get("slices"))
     else:
         with Pool(workers) as pool:
-            for parses in tqdm(pool.imap_unordered(parse_annotation_file, [(format, file, labels_list) for file in files[0]]), desc="Parsing annotation files", total=len(files[0])):
+            for parses in tqdm(pool.imap_unordered(parse_annotation_file, ((format, file, labels_list) for file in files[0])), desc="Parsing annotation files", total=len(files[0])):
                 if parses is not None and len(parses.get("slices")) > 0:
                     labels = labels.union(parses.get("labels"))
                     names.append(parses.get("name"))
@@ -168,7 +168,7 @@ def parse_annotation_files(format, files, workers):
 def slice_images(images_path, names, slice_groups, padding, save_path, workers):
     """Loop through all slice groups and slice each image."""
     with Pool(workers) as pool:
-        for _ in tqdm(pool.imap_unordered(slice_image, [(images_path, name, slices, padding, save_path) for name, slices in zip(names, slice_groups)]), desc="Slicing images", total=len(slice_groups)):
+        for _ in tqdm(pool.imap_unordered(slice_image, ((images_path, name, slices, padding, save_path) for name, slices in zip(names, slice_groups))), desc="Slicing images", total=len(slice_groups)):
             pass
 
 def slice_image(args):
