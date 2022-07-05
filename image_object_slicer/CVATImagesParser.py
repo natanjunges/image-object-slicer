@@ -27,14 +27,11 @@ class CVATImagesParser(SingleFileAnnotationParser):
     def split_file(cls, file, labels):
         """Split a CVAT for images annotation file into annotation items."""
         data = ElementTree.parse(file)
-        items = data.findall("image")
-        i = 0
+        items = []
 
-        while i < len(items):
-            if items[i].find("box") is None:
-                items.pop(i)
-            else:
-                i += 1
+        for item in data.iterfind("image"):
+            if item.find("box") is not None:
+                items.append(item)
 
         return items
 

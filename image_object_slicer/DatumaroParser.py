@@ -31,18 +31,14 @@ class DatumaroParser(SingleFileAnnotationParser):
 
         labels = data.get("categories").get("label").get("labels")
         labels = [label.get("name") for label in labels]
-        items = data.get("items")
-        i = 0
+        items = []
 
-        while i < len(items):
-            if len(items[i].get("annotations")) == 0:
-                items.pop(i)
-            else:
-                i += 1
+        for item in data.get("items"):
+            if len(item.get("annotations")) > 0:
+                for annotation in item.get("annotations"):
+                    annotation["label_id"] = labels[annotation.get("label_id")]
 
-        for item in items:
-            for annotation in item.get("annotations"):
-                annotation["label_id"] = labels[annotation.get("label_id")]
+                items.append(item)
 
         return items
 

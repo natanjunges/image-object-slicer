@@ -29,18 +29,29 @@ class COCOParser(SingleFileAnnotationParser):
         with open(file) as fp:
             data = json.load(fp)
 
-        labels = data.get("categories")
-        labels = [label.get("name") for label in labels]
-        images = data.get("images")
-        images = [image.get("file_name").split("/")[-1] for image in images]
-        items = {}
+        labels = {label.get("id"): label.get("name") for label in data.get("categories")}
+        images = {image.get("id"): image.get("file_name").split("/")[-1] for image in data.get("images")}
+        items = []
+        item = None
 
         for annotation in data.get("annotations"):
-            annotation["category_id"] = labels[annotation.get("category_id") - 1]
-            items[images[annotation.get("image_id") - 1]] = items.get(images[annotation.get("image_id") - 1], {"image": images[annotation.get("image_id") - 1], "annotations": []})
-            items[images[annotation.get("image_id") - 1]].get("annotations").append(annotation)
+            annotation["category_id"] = labels.get(annotation.get("category_id"))
+            annotation["image_id"] = images.get(annotation.get("image_id"))
 
-        return list(items.values())
+            if item is not None:
+                if item.get("image") == annotation.get("image_id"):
+                    item.get("annotations").append(annotation)
+                else:
+                    items.append(item)
+                    item = None
+
+            if item is None:
+                item = {"image": annotation.get("image_id"), "annotations": [annotation]}
+
+        if item is not None:
+            items.append(item)
+
+        return items
 
     @classmethod
     def parse_item(cls, item):

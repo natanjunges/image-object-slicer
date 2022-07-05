@@ -28,14 +28,26 @@ class OpenImagesParser(SingleFileAnnotationParser):
         """Split an Open Images annotation file into annotation items."""
         with open(file, newline="") as fp:
             data = DictReader(fp)
-            items = {}
+            items = []
+            item = None
 
-            for item in data:
-                item["ImageID"] = item.get("ImageID").split("/")[-1]
-                items[item.get("ImageID")] = items.get(item.get("ImageID"), {"image": item.get("ImageID"), "annotations": []})
-                items[item.get("ImageID")].get("annotations").append(item)
+            for annotation in data:
+                annotation["ImageID"] = annotation.get("ImageID").split("/")[-1]
 
-            return list(items.values())
+                if item is not None:
+                    if item.get("image") == annotation.get("ImageID"):
+                        item.get("annotations").append(annotation)
+                    else:
+                        items.append(item)
+                        item = None
+
+                if item is None:
+                    item = {"image": annotation.get("ImageID"), "annotations": [annotation]}
+
+            if item is not None:
+                items.append(item)
+
+            return items
 
     @classmethod
     def parse_item(cls, item):

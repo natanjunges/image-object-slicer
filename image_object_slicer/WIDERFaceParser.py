@@ -25,21 +25,39 @@ class WIDERFaceParser(SingleFileAnnotationParser):
     def split_file(cls, file, labels):
         """Split a WIDER Face annotation file into annotation items."""
         with open(file) as fp:
-            data = fp.readlines()
+            items = []
+            item = None
+            i = 0
 
-        items = []
-        i = 0
+            for line in fp:
+                if i == -1:
+                    try:
+                        i = int(line)
 
-        while i < len(data):
-            try:
-                item_len = int(data[i + 1])
-                item = data[i:i+2+item_len]
+                        if i < 1:
+                            i = -1
+                            raise Exception()
+
+                        item.append(line)
+                    except:
+                        item = [line]
+                elif i == 0:
+                    if item is not None:
+                        items.append(item)
+
+                    item = [line]
+                    i -= 1
+                else:
+                    item.append(line)
+                    i -= 1
+
+            if item is not None and len(item) > 2:
+                if i > 0:
+                    raise Exception("Item shorter than expected: expected {}, got {}".format(len(item) + i, len(item)))
+
                 items.append(item)
-                i += 2 + item_len
-            except:
-                i += 1
 
-        return items
+            return items
 
     @classmethod
     def parse_item(cls, item):
